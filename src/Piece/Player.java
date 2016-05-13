@@ -46,6 +46,7 @@ public class Player extends Character {
     private BufferedImage helmet;
     private BufferedImage hunter;
     private boolean isHunterIMG = true;
+    private double meleeDamage;
 
     public Player(String name, int x, int y) throws IOException {
         super(name, initialX, initialY, initialHealth,
@@ -60,6 +61,7 @@ public class Player extends Character {
         this.img = this.hunter;
         this.horzOrientation = RIGHT;
         this.vertOrientation = DOWN;
+        this.meleeDamage = 100;
     }
 
     public Player(String name, Board board) {
@@ -293,6 +295,10 @@ public class Player extends Character {
         return this.damage;
     }
 
+    public double getMeleeDamage() {
+        return this.meleeDamage;
+    }
+
     public int getAmmo() {
         return this.ammo;
     }
@@ -387,4 +393,5 @@ public class Player extends Character {
                                                      AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         this.img = op.filter(this.img, null);
     }
+
 }

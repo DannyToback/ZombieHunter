@@ -16,6 +16,7 @@
 package Game;
 
 import Piece.Bullet;
+import Piece.Knife;
 import Piece.Wall;
 import Piece.Zombie;
 import java.awt.Dimension;
@@ -97,6 +98,38 @@ public class DrawBullet extends JComponent implements KeyListener {
         return false;
     }
 
+    /**
+     * Detects when the knife makes contact with any zombie on the board, only
+     * will go if knife makes contact
+     *
+     * @param knife
+     * @return
+     */
+    public boolean melee(Knife knife) {
+        int boardx = (knife.getX()) / 20;
+        int boardy = (knife.getY()) / 20;
+        int dirx = 0;
+        int diry = 0;
+        if (knife.getOrientation() == 0) {
+            dirx -= 1;
+        } else if (knife.getOrientation() == 1) {
+            dirx += 1;
+        } else if (knife.getOrientation() == 2) {
+            diry += 1;
+        } else if (knife.getOrientation() == 3) {
+            diry -= 1;
+        }
+        boardx += dirx;
+        boardy += diry;
+        if (board.getCells()[boardy][boardx] instanceof Zombie) {
+            Zombie zom = (Zombie) board.getCells()[boardy][boardx];
+            int d = (int) board.getPlayer().getMeleeDamage();
+            zom.takeDamage(d);
+            return true;
+        }
+        return false;
+    }
+
     @Override
 
     /**
@@ -134,6 +167,23 @@ public class DrawBullet extends JComponent implements KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_Q) {
+            int curX = board.getPlayer().getY();
+            int curY = board.getPlayer().getX();
+            int curOr = board.getPlayer().getOrientation();
+            Knife knife = null;
+            try {
+                knife = new Knife(curX, curY, curOr);
+            } catch (IOException ex) {
+                Logger.getLogger(DrawBullet.class.getName()).log(Level.SEVERE,
+                                                                 null, ex);
+            }
+            if (melee(knife)) {
+                Zombie zom = (Zombie) board.getCells()[curX][curY];
+                int d = (int) board.getPlayer().getMeleeDamage();
+                zom.takeDamage(d);
+            }
+        }
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 
             if (board.getPlayer().getAmmo() > 0) {
